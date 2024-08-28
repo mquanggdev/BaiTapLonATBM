@@ -104,17 +104,7 @@ block main
         value="inactive"
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
-    div(class="form-group")
-      button(
-        type="submit"
-        class="btn btn-primary"
-        button-qr-create
-      ) Tạo Qr
-    div(class="form-group")
-      label(class="qr-label") Link : 
-      div(qr-link)
-      label(class="qr-image") Hình ảnh :
-      div(qr-image) 
+
     
 
     div(class="form-group")
@@ -123,3 +113,13 @@ block main
         class="btn btn-primary"
         button-submit-create
       ) Tạo mới
+    div(class="form-group")
+      button(
+        type="button"
+        class="btn btn-primary"
+        button-qr-create
+      ) Tạo Qr
+      
+    div(class="form-group")
+      label(class="qr-image") Hình ảnh :
+      div(qr-image) 

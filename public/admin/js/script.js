@@ -259,54 +259,37 @@ if(sort){
 
 // Qr Code
 const formDataCreate = document.querySelector("[formData]");
-const butonCreateQr = document.querySelector("[buton-qr-create]");
-const qrImage = document.querySelector("[qrimage]");
+const butonCreateQr = document.querySelector("[button-qr-create]");
 if(formDataCreate){
+    let slug = "" ;
     const buttonSubmitCreate = formDataCreate.querySelector("[button-submit-create]");
     buttonSubmitCreate.addEventListener("click" , (e) => {
         e.preventDefault();
         const link = formDataCreate.getAttribute("action");
-        const data = {
-            title: formDataCreate.elements.title.value,
-            description: formDataCreate.elements.description.value,
-            price: formDataCreate.elements.price.value,
-            discountPercentage: formDataCreate.elements.discountPercentage.value,
-            stock: formDataCreate.elements.stock.value,
-            status: formDataCreate.elements.status.value,
-            position: formDataCreate.elements.position.value
-        }
+        const formData = new FormData(formDataCreate);
         fetch(link , {
             method:"POST" , 
-            headers : {   
-                "Content-type":"application/json"
-            },
-            body : JSON.stringify(data)
+            body : formData
         })
             .then(res => res.json())
             .then(data => {
                 if(data.code == 200){
-                    window.location.reload() ;
+                    slug = data.slug ;
                 }
             })
+    })
+    butonCreateQr.addEventListener("click", () => {
+        const qrImage = document.querySelector("[qr-image]");
+        if (qrImage) {
+                    new QRCode(qrImage, {
+                        text: `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`,
+                        width: 128,
+                        height: 128
+                    });
+                } else {
+                    console.error("Phần tử với thuộc tính qrimage không tìm thấy.");
+                }
         
     })
 }
-
-// window.onload = () => {
-//     const qrImage = document.querySelector("[data-qrimage]"); // Sử dụng thuộc tính data-qrimage để chọn phần tử
-//     console.log(qrImage);
-//     console.log(typeof QRCode);
-    
-    
-//     if (qrImage) {
-//         new QRCode(qrImage, {
-//             text: "https://demo-project-1-rg3sv8tiv-minh-quangs-projects-589b6b0c.vercel.app/products/detail/san-pham-demo-1",
-//             width: 128,
-//             height: 128
-//         });
-//     } else {
-//         console.error("Phần tử với thuộc tính data-qrimage không tìm thấy.");
-//     }
-// };
-
 // End Qr Code 

@@ -138,7 +138,6 @@ module.exports.create = async (req , res) => {
 }
 // [post]/admin/product/createPost
 module.exports.createPost = async (req , res) => {
-    console.log(req.body);
     
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
@@ -153,9 +152,9 @@ module.exports.createPost = async (req , res) => {
 
     const newProduct = new Product(req.body);
     await newProduct.save();
-    // res.redirect(`/${systemConfig.prefixAdmin}/products`);
     res.json({
-        "code":"200"
+        "code":"200" ,
+        "slug": newProduct.slug ,
     })
 }
 
