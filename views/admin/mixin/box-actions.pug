@@ -1,0 +1,9 @@
+mixin box-mixin-actions(link)
+    div(class = "input-group" box-actions=link)
+        select(class = "custom-select")
+          option(selected='') Chọn Trạng Thái...
+          option(value='active') Hoạt Động
+          option(value='inactive') Dừng Hoạt Động
+          option(value='delete') Xóa
+        .input-group-append
+          button.btn.btn-outline-secondary(type='button') Áp Dụng
