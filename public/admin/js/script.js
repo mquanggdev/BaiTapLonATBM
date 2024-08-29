@@ -258,38 +258,83 @@ if(sort){
 
 
 // Qr Code
+// Qr Code
 const formDataCreate = document.querySelector("[formData]");
 const butonCreateQr = document.querySelector("[button-qr-create]");
-if(formDataCreate){
-    let slug = "" ;
-    const buttonSubmitCreate = formDataCreate.querySelector("[button-submit-create]");
-    buttonSubmitCreate.addEventListener("click" , (e) => {
+const buttonSubmitCreate = formDataCreate ? formDataCreate.querySelector("[button-submit-create]") : null;
+
+if (formDataCreate && buttonSubmitCreate && butonCreateQr) {
+    let slug = "";
+    let creationComplete = false; // Biến trạng thái để kiểm tra quá trình tạo
+
+    // Ẩn nút buttonCreateQr ban đầu
+    butonCreateQr.style.display = "none";
+
+    buttonSubmitCreate.addEventListener("click", (e) => {
         e.preventDefault();
         const link = formDataCreate.getAttribute("action");
         const formData = new FormData(formDataCreate);
-        fetch(link , {
-            method:"POST" , 
-            body : formData
+
+        fetch(link, {
+            method: "POST",
+            body: formData
         })
             .then(res => res.json())
             .then(data => {
-                if(data.code == 200){
-                    slug = data.slug ;
+                if (data.code == 200) {
+                    slug = data.slug;
+                    creationComplete = true; // Đặt biến trạng thái khi hoàn tất
+
+                    // Hiển thị nút buttonCreateQr sau khi hoàn tất
+                    butonCreateQr.style.display = "inline-block";
                 }
             })
-    })
+            .catch(error => {
+                console.error("Error during product creation:", error);
+                creationComplete = false; // Đặt biến trạng thái lại nếu có lỗi
+            });
+    });
+
     butonCreateQr.addEventListener("click", () => {
-        const qrImage = document.querySelector("[qr-image]");
-        if (qrImage) {
-                    new QRCode(qrImage, {
-                        text: `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`,
-                        width: 128,
-                        height: 128
+        if (creationComplete) {
+            const qrImage = document.querySelector("[qr-image]");
+            const qrCodeUrl = `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`;
+
+            if (qrImage) {
+                new QRCode(qrImage, {
+                    text: qrCodeUrl,
+                    width: 128,
+                    height: 128,
+                });
+
+                const canvas = qrImage.querySelector("canvas");
+                const linkQrImage = canvas.toDataURL("image/png");
+
+                fetch(`/admin/products/saveQr`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ slug, linkQrImage })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.code == 200) {
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 3000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error during QR code upload:", error);
                     });
-                } else {
-                    console.error("Phần tử với thuộc tính qrimage không tìm thấy.");
-                }
-        
-    })
+            } else {
+                console.error("Phần tử với thuộc tính qr-image không tìm thấy.");
+            }
+        } else {
+            console.warn("Chưa hoàn tất tạo sản phẩm.");
+        }
+    });
 }
+
 // End Qr Code 

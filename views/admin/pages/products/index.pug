@@ -28,11 +28,17 @@ block main
   .card.mb-3
     .card-header Danh sách
     .card-body
-      div(class="text-right mb-3")
-        a(
-          href=`/${prefixAdmin}/products/create`
-          class="btn btn-outline-success"
-        ) + Thêm mới
+      .row
+        div(class="mb-3 mr-3 ml-3")
+          a(
+            href=`/${prefixAdmin}/products/create`
+            class="btn btn-outline-success"
+          ) + Thêm mới
+        div(class="mb-3")
+          a(
+            href=`/${prefixAdmin}/excel/downloadExcel`
+            class="btn btn-outline-success"
+          ) + Tải Excel
 
       table.table.table-hover.table-sm
         thead

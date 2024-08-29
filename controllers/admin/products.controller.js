@@ -1,5 +1,6 @@
 const Product = require("../../model/product.model");
 const paginationHelper = require("../../helper/pagination.helper");
+const streamUpload = require("../../helper/streamUpload.helper")
 const systemConfig = require("../../config/system");
 //GET /admin/products
 module.exports.index = async (req,res) => {
@@ -138,7 +139,6 @@ module.exports.create = async (req , res) => {
 }
 // [post]/admin/product/createPost
 module.exports.createPost = async (req , res) => {
-    
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
@@ -152,6 +152,8 @@ module.exports.createPost = async (req , res) => {
 
     const newProduct = new Product(req.body);
     await newProduct.save();
+
+    req.flash("success" , "Thêm sản phẩm thành công!")
     res.json({
         "code":"200" ,
         "slug": newProduct.slug ,
@@ -229,6 +231,39 @@ module.exports.detail = async (req , res) => {
     }
 }
 
-
+// post /admin/saveQr
+module.exports.saveQr = async (req , res) => {
+    try{
+        const slug = req.body.slug ;
+        console.log(slug);
+        
+        let qrUrl = req.body.linkQrImage;
+        
+        if (qrUrl.startsWith('data:image/png;base64,')) {
+            const base64Data = qrUrl.replace(/^data:image\/png;base64,/, "");
+            const buffer = Buffer.from(base64Data, 'base64');
+            let uploadResult;
+            try {
+                uploadResult = await streamUpload.streamUpload(buffer);
+                qrUrl = uploadResult.url;
+                console.log(qrUrl);
+                
+                await Product.updateOne(
+                    { slug: slug },
+                    { qrLink: qrUrl }
+                );
+            } catch (error) {
+                console.error('Lỗi khi tải lên QR:', error);
+                res.status(500).json({ code: 500, message: 'Lỗi khi tải lên QR' });
+                return;
+            } 
+        }
+        res.json({
+            code : 200
+        })
+    }catch(e){
+        res.redirect(`/${systemConfig.prefixAdmin}/products`);
+    }
+}
 
 
