@@ -201,11 +201,19 @@ module.exports.editPatch = async (req , res) => {
             _id: id,
             deleted: false
         }, req.body);
+        const product = await Product.findOne({
+            _id : id
+        })
+        res.json({
+            code : 200 ,
+            slug : product.slug
+        })
         req.flash("success", "Cập nhật sản phẩm thành công!");
     }catch(err){
         req.flash("error","Id sản phẩm không hợp lệ")
+        console.log(err);
+        
     }
-    res.redirect(`back`);
 }
 //[get]/admin/detail/:id
 module.exports.detail = async (req , res) => {

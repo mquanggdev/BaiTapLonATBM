@@ -10,6 +10,7 @@ block main
     action=`/${prefixAdmin}/products/edit/${product.id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
+    form-edit
   )
     div(class="form-group")
       label(for="title") Tiêu đề
@@ -113,4 +114,15 @@ block main
       button(
         type="submit"
         class="btn btn-primary"
+        button-submit-edit
       ) Cập nhật
+    div(class="form-group")
+      button(
+        type="button"
+        class="btn btn-primary"
+        button-qr-edit
+      ) Tạo Qr
+      
+    div(class="form-group")
+      label(class="qr-image") Hình ảnh :
+      div(qr-image-edit style="width:150px;height:150px; border : 1px solid #333;display:grid;place-items:center") 
