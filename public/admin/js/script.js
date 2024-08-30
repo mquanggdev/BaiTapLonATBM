@@ -1,4 +1,3 @@
-
 // button status
 const listButtonStatus = document.querySelectorAll("[button-status]");
 if (listButtonStatus.length > 0 ){
