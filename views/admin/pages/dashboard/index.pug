@@ -1,3 +1,24 @@
 extends ../../layout/default.pug
+
 block main
-    h1 Trang Tổng Quan
+  h1(class="mb-4") Thông tin cá nhân
+
+  if (accounts.avatar)
+    img(src=accounts.avatar width="150px" class="mb-3")
+
+  if (accounts.fullName)
+    p Họ tên: <b>#{accounts.fullName}</b>
+
+  if (accounts.email)
+    p Email: <b>#{accounts.email}</b>
+
+  if (accounts.phone)
+    p Số điện thoại: <b>#{accounts.phone}</b>
+
+  p 
+    span Trạng thái: 
+    span
+      <b>#{accounts.status === "active" ? "Hoạt động": "Dừng hoạt động"}</b>
+
+  if (role.title)
+    p Phân quyền: <b>#{role.title}</b>

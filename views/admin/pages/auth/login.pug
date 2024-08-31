@@ -1,0 +1,14 @@
+include ../../layout/auth.pug
+block main
+    .body-container
+        .login-container
+            h2 Đăng nhập
+            form(action='/admin/auth/login', method='POST')
+                .input-group
+                    label(for='email') Email
+                    input(type='email', name='email', required='' id="email")
+                .input-group
+                    label(for='password') Mật khẩu
+                    input(type='password', name='password', required='' id="password")
+
+                button(type='submit' class="login-button") Đăng Nhập

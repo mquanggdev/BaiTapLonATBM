@@ -416,3 +416,71 @@ if (formDataEdit && buttonSubmitEdit && butonEditQr) {
     });
 }
 // end Edit Code
+
+
+
+
+// Bảng phân quyền
+const tablePermissions = document.querySelector("[table-permissions]");
+if(tablePermissions){
+  const buttonSubmit = document.querySelector("[button-submit]");
+  buttonSubmit.addEventListener("click", () => {
+    const roles = [] ;
+
+    const listElementRoleId = tablePermissions.querySelectorAll("[role-id]");
+
+    listElementRoleId.forEach(element => {
+      const roleId = element.getAttribute("role-id")
+      
+      const role = {
+        id: roleId,
+        permissions:[]
+      }
+
+      const listInputCheckedPermissions = tablePermissions.querySelectorAll(`input[data-id="${roleId}"]:checked`);
+
+      listInputCheckedPermissions.forEach(input => {
+        const permission = input.getAttribute("data-name");
+        role.permissions.push(permission);
+      });
+      roles.push(role);
+    })
+    const link = document.querySelector("[button-submit]").getAttribute("button-submit");
+    fetch(link , {
+      method: "PATCH",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(roles)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == 200){
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      }) 
+  })
+
+  // hiển thị mặc định dấu tích
+  const dataRecords = document.querySelector("[data-records]")
+      if(dataRecords){
+        const records = JSON.parse(dataRecords.getAttribute("data-records"));
+        records.forEach((record,index) =>{
+          const permissions = record.permissions;
+          permissions.forEach(permission=>{
+            const row = tablePermissions.querySelector(`tr[data-nametr="${permission}"]`);
+            console.log(row);
+            const input = row.querySelectorAll("input")[index];
+            input.checked = true;
+          })
+        })
+    } 
+}
+
+// end Bảng phân quyền
