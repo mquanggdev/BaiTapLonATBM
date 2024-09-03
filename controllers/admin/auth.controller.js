@@ -37,7 +37,12 @@ module.exports.loginPost = async (req, res) => {
     return;
   }
 
-  res.cookie("token", account.token);
+  res.cookie("token", account.token , {
+    maxAge : 24 * 60 * 60 * 1000 ,
+    httpOnly : true,
+    secure: true, // Chỉ gửi qua HTTPS
+    sameSite: 'Strict' // Ngăn chặn các yêu cầu giả mạo từ các trang khác
+  });
   res.redirect(`/${systemConfig.prefixAdmin}/dashboard`);
 }
 

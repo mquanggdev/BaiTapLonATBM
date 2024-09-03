@@ -269,12 +269,12 @@ if (formDataCreate && buttonSubmitCreate && butonCreateQr) {
     // Ẩn nút buttonCreateQr ban đầu
     butonCreateQr.style.display = "none";
 
-    buttonSubmitCreate.addEventListener("click", (e) => {
+    buttonSubmitCreate.addEventListener("click", async (e) => {
         e.preventDefault();
         const link = formDataCreate.getAttribute("action");
         const formData = new FormData(formDataCreate);
 
-        fetch(link, {
+        await fetch(link, {
             method: "POST",
             body: formData
         })
@@ -294,7 +294,7 @@ if (formDataCreate && buttonSubmitCreate && butonCreateQr) {
             });
     });
 
-    butonCreateQr.addEventListener("click", () => {
+    butonCreateQr.addEventListener("click", async () => {
         if (creationComplete) {
             const qrImage = document.querySelector("[qr-image]");
             const qrCodeUrl = `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`;
@@ -309,7 +309,7 @@ if (formDataCreate && buttonSubmitCreate && butonCreateQr) {
                 const canvas = qrImage.querySelector("canvas");
                 const linkQrImage = canvas.toDataURL("image/png");
 
-                fetch(`/admin/products/saveQr`, {
+                await fetch(`/admin/products/saveQr`, {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
