@@ -10,7 +10,7 @@ module.exports.requireAuth = async(req,res,next) => {
    const account = await Account.findOne({
     token: req.cookies.token,
     deleted:false
-   }).select(`fullName email phone avatar role_id`);
+   }).select(`username email phone avatar status role_id `);
 
    if(!account){
     res.redirect(`/${systemConfig.prefixAdmin}/auth/login`);

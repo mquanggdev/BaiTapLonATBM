@@ -6,6 +6,8 @@ const systemConfig = require("../../config/system");
 
 // [GET] /admin/accounts
 module.exports.index = async (req, res) => {
+  if(res.locals.role.permissions.includes("accounts_view")){
+
   const records = await Account.find({
     deleted:false,
   })
@@ -22,9 +24,14 @@ module.exports.index = async (req, res) => {
     records:records
   });
 }
+else{
+  return;
+}
+}
 
 // [GET] /admin/roleaccounts/create
 module.exports.create = async (req, res) => {
+  if(res.locals.role.permissions.includes("accounts_create")){
     const roles = await Role.find({
         deleted: false
       }).select("title");
@@ -33,9 +40,13 @@ module.exports.create = async (req, res) => {
         pageTitle: "Tạo tài khoản admin",
         roles: roles
       });
+  }else{
+    return;
+  }
 }
 // [Post] /admin/accounts/create
 module.exports.createPost = async (req, res) => {
+  if(res.locals.role.permissions.includes("accounts_view")){
     if(req.body){
         req.body.password = md5(req.body.password);
         req.body.token = generateHelper.generateRandomString(30);
@@ -49,10 +60,14 @@ module.exports.createPost = async (req, res) => {
     else{
         req.redirect(`/${systemConfig.prefixAdmin}/accounts`);
     }
+  }else{
+    return;
+  }
   }
 
 // [GET] /admin/accounts/edit/:id
 module.exports.edit = async (req, res) => {
+  if(res.locals.role.permissions.includes("accounts_edit")){
   const id = req.params.id;
 
   const account = await Account.findOne({
@@ -69,10 +84,14 @@ module.exports.edit = async (req, res) => {
     roles: roles,
     account: account
   });
+}else{
+  return;
+}
 }
 
 // [PATCH] /admin/accounts/edit/:id
 module.exports.editPatch = async (req, res) => {
+  if(res.locals.role.permissions.includes("accounts_edit")){
   const id = req.params.id;
 
   if(req.body.password == "") {
@@ -89,6 +108,9 @@ module.exports.editPatch = async (req, res) => {
   req.flash("success", "Cập nhật thành công!");
 
   res.redirect("back");
+}else{
+  return;
+}
 }
 
 

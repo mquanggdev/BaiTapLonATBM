@@ -4,6 +4,8 @@ const streamUpload = require("../../helper/streamUpload.helper")
 const systemConfig = require("../../config/system");
 //GET /admin/products
 module.exports.index = async (req,res) => {
+    if(res.locals.role.permissions.includes("products_view")){
+
     const filterStatus = [
         {
             label: "Tất cả" ,
@@ -63,9 +65,13 @@ module.exports.index = async (req,res) => {
         filterStatus: filterStatus,
         pagination: pagination
     });
+}else{
+    return;
+}
 }
 //[Patch] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_edit")){
     // console.log(req.params) // tất cả các biến động thì sẽ được lưu vào thằng params
     const {id,statusChange} = req.params; // thằng này thì lấy thẳng từ link
     await Product.updateOne({
@@ -77,9 +83,13 @@ module.exports.changeStatus = async (req , res) => {
     res.json({ // thằng này là thằng mà ta muốn gửi khi mà ta fetch link
         code : 200
     });
+}else{
+    return;
+}
 }
 //[Patch] /admin/products/change-multi
 module.exports.changeMulti = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_edit")){
     const {status,ids} = req.body; // thằng này lấy từ body về
     
     switch (status) {
@@ -104,9 +114,13 @@ module.exports.changeMulti = async (req , res) => {
     res.json({
         code : 200
     });
+}else{
+    return;
+}
 }
 //[patch] /admin/products/delete:id
 module.exports.deleteItem = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_delete")){
     const id = req.params.id;
     await Product.updateOne({
         _id : id
@@ -117,9 +131,13 @@ module.exports.deleteItem = async (req , res) => {
     res.json({
         code : 200
     });
+}else{
+    return;
+}
 }
 //[patch] /admin/products/change-position
 module.exports.changePosition = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_edit")){
     const id = req.params.id;
     const position = req.body.position;
     await Product.updateOne({
@@ -129,16 +147,23 @@ module.exports.changePosition = async (req , res) => {
     }) 
     res.json({
         code : 200
-    });
+    });}else{
+        return;
+    }
 }
 // [get]/admin/product/create
 module.exports.create = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_create")){
     res.render("admin/pages/products/create.pug" , {
         pageTitle: "Thêm mới sản phẩm"
     })
+}else{
+    return ;
+}
 }
 // [post]/admin/product/createPost
 module.exports.createPost = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_edit")){
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
@@ -157,11 +182,14 @@ module.exports.createPost = async (req , res) => {
     res.json({
         "code":"200" ,
         "slug": newProduct.slug ,
-    })
+    })}else{
+        return ;
+    }
 }
 
 // [get]/admin/product/edit/:id
 module.exports.edit = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_edit")){
     try{
         const id = req.params.id ;
 
@@ -181,10 +209,13 @@ module.exports.edit = async (req , res) => {
         }
     }catch(e){
         res.redirect(`/${systemConfig.prefixAdmin}/products`);
+    }}else{
+        return;
     }
 }
 // [patch]/admin/product/edit/:id
 module.exports.editPatch = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_edit")){
     try{
         const id = req.params.id
         req.body.price = parseInt(req.body.price);
@@ -212,11 +243,14 @@ module.exports.editPatch = async (req , res) => {
     }catch(err){
         req.flash("error","Id sản phẩm không hợp lệ")
         console.log(err);
-        
     }
+}else{
+    return;
+}
 }
 //[get]/admin/detail/:id
 module.exports.detail = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_view")){
     try{
         const id = req.params.id ;
 
@@ -236,11 +270,14 @@ module.exports.detail = async (req , res) => {
         }
     }catch(e){
         res.redirect(`/${systemConfig.prefixAdmin}/products`);
+    }}else{
+        return;
     }
 }
 
 // post /admin/saveQr
 module.exports.saveQr = async (req , res) => {
+    if(res.locals.role.permissions.includes("products_create")){
     try{
         const slug = req.body.slug ;
         console.log(slug);
@@ -272,6 +309,9 @@ module.exports.saveQr = async (req , res) => {
     }catch(e){
         res.redirect(`/${systemConfig.prefixAdmin}/products`);
     }
+}else{
+    return;
+}
 }
 
 

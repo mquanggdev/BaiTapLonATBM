@@ -6,8 +6,8 @@ block main
   if (accounts.avatar)
     img(src=accounts.avatar width="150px" class="mb-3")
 
-  if (accounts.fullName)
-    p Họ tên: <b>#{accounts.fullName}</b>
+  if (accounts.username)
+    p Họ tên: <b>#{accounts.username}</b>
 
   if (accounts.email)
     p Email: <b>#{accounts.email}</b>
@@ -18,7 +18,10 @@ block main
   p 
     span Trạng thái: 
     span
-      <b>#{accounts.status === "active" ? "Hoạt động": "Dừng hoạt động"}</b>
+      <b>#{accounts.status == "active" ? "Hoạt động" : "Dừng hoạt động"}</b>
 
   if (role.title)
     p Phân quyền: <b>#{role.title}</b>
+  if (role.permissions)
+    each permission in role.permissions
+      p Các quyền hiện tại: <b>#{permission}</b>
