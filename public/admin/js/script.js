@@ -259,163 +259,152 @@ if(sort){
 
 // Qr Code
 // Qr Code
-const formDataCreate = document.querySelector("[formData]");
-const butonCreateQr = document.querySelector("[button-qr-create]");
-const buttonSubmitCreate = formDataCreate ? formDataCreate.querySelector("[button-submit-create]") : null;
+// const formDataCreate = document.querySelector("[formData]");
+// const buttonSubmitCreate = formDataCreate ? formDataCreate.querySelector("[button-submit-create]") : null;
 
-if (formDataCreate && buttonSubmitCreate && butonCreateQr) {
-    let slug = "";
-    let creationComplete = false; // Biến trạng thái để kiểm tra quá trình tạo
-    // Ẩn nút buttonCreateQr ban đầu
-    butonCreateQr.style.display = "none";
+// if (formDataCreate && buttonSubmitCreate) {
+//     buttonSubmitCreate.addEventListener("click", async (e) => {
+//         e.preventDefault();
+//         const link = formDataCreate.getAttribute("action");
+//         const formData = new FormData(formDataCreate);
 
-    buttonSubmitCreate.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const link = formDataCreate.getAttribute("action");
-        const formData = new FormData(formDataCreate);
+//         await fetch(link, {
+//             method: "POST",
+//             body: formData
+//         })
+//             .then(res => res.json())
+//             .then(data => {
+//                 if (data.code == 200) {
+//                     window.location.reload();
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error("Error during product creation:", error);
+//             });
+//     });
 
-        await fetch(link, {
-            method: "POST",
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.code == 200) {
-                    slug = data.slug;
-                    creationComplete = true; // Đặt biến trạng thái khi hoàn tất
+    // butonCreateQr.addEventListener("click", async () => {
+    //     if (creationComplete) {
+    //         const qrImage = document.querySelector("[qr-image]");
+    //         const qrCodeUrl = `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`;
 
-                    // Hiển thị nút buttonCreateQr sau khi hoàn tất
-                    butonCreateQr.style.display = "inline-block";
-                }
-            })
-            .catch(error => {
-                console.error("Error during product creation:", error);
-                creationComplete = false; // Đặt biến trạng thái lại nếu có lỗi
-            });
-    });
+    //         if (qrImage) {
+    //             new QRCode(qrImage, {
+    //                 text: qrCodeUrl,
+    //                 width: 128,
+    //                 height: 128,
+    //             });
 
-    butonCreateQr.addEventListener("click", async () => {
-        if (creationComplete) {
-            const qrImage = document.querySelector("[qr-image]");
-            const qrCodeUrl = `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`;
+    //             const canvas = qrImage.querySelector("canvas");
+    //             const linkQrImage = canvas.toDataURL("image/png");
 
-            if (qrImage) {
-                new QRCode(qrImage, {
-                    text: qrCodeUrl,
-                    width: 128,
-                    height: 128,
-                });
-
-                const canvas = qrImage.querySelector("canvas");
-                const linkQrImage = canvas.toDataURL("image/png");
-
-                await fetch(`/admin/products/saveQr`, {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ slug, linkQrImage })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.code == 200) {
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 3000);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error during QR code upload:", error);
-                    });
-            } else {
-                console.error("Phần tử với thuộc tính qr-image không tìm thấy.");
-            }
-        } else {
-            console.warn("Chưa hoàn tất tạo sản phẩm.");
-        }
-    });
-}
+    //             await fetch(`/admin/products/saveQr`, {
+    //                 method: "POST",
+    //                 headers: {
+    //                     'Content-Type': 'application/json'
+    //                 },
+    //                 body: JSON.stringify({ slug, linkQrImage })
+    //             })
+    //                 .then(res => res.json())
+    //                 .then(data => {
+    //                     if (data.code == 200) {
+    //                         setTimeout(() => {
+    //                             window.location.reload();
+    //                         }, 3000);
+    //                     }
+    //                 })
+    //                 .catch(error => {
+    //                     console.error("Error during QR code upload:", error);
+    //                 });
+    //         } else {
+    //             console.error("Phần tử với thuộc tính qr-image không tìm thấy.");
+    //         }
+    //     } else {
+    //         console.warn("Chưa hoàn tất tạo sản phẩm.");
+    //     }
+    // });
+// }
 // End Qr Code
 
-// Edit Code
-const formDataEdit = document.querySelector("[form-edit]");
-const butonEditQr = document.querySelector("[button-qr-edit]");
-const buttonSubmitEdit = formDataEdit ? formDataEdit.querySelector("[button-submit-edit]") : null;
+// // Edit Code
+// const formDataEdit = document.querySelector("[form-edit]");
+// const butonEditQr = document.querySelector("[button-qr-edit]");
+// const buttonSubmitEdit = formDataEdit ? formDataEdit.querySelector("[button-submit-edit]") : null;
 
-if (formDataEdit && buttonSubmitEdit && butonEditQr) {
-    let slug = "";
-    let creationComplete = false; // Biến trạng thái để kiểm tra quá trình tạo
-    // Ẩn nút buttonCreateQr ban đầu
-    butonEditQr.style.display = "none";
+// if (formDataEdit && buttonSubmitEdit && butonEditQr) {
+//     let slug = "";
+//     let creationComplete = false; // Biến trạng thái để kiểm tra quá trình tạo
+//     // Ẩn nút buttonCreateQr ban đầu
+//     butonEditQr.style.display = "none";
 
-    buttonSubmitEdit.addEventListener("click", (e) => {
-        e.preventDefault();
-        const link = formDataEdit.getAttribute("action");
-        const formData = new FormData(formDataEdit);
+//     buttonSubmitEdit.addEventListener("click", (e) => {
+//         e.preventDefault();
+//         const link = formDataEdit.getAttribute("action");
+//         const formData = new FormData(formDataEdit);
 
-        fetch(link, {
-            method: "PATCH",
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.code == 200) {
-                    slug = data.slug;
-                    creationComplete = true; // Đặt biến trạng thái khi hoàn tất
+//         fetch(link, {
+//             method: "PATCH",
+//             body: formData
+//         })
+//             .then(res => res.json())
+//             .then(data => {
+//                 if (data.code == 200) {
+//                     slug = data.slug;
+//                     creationComplete = true; // Đặt biến trạng thái khi hoàn tất
 
-                    // Hiển thị nút buttonCreateQr sau khi hoàn tất
-                    butonEditQr.style.display = "inline-block";
-                }
-            })
-            .catch(error => {
-                console.error("Error during product creation:", error);
-                creationComplete = false; // Đặt biến trạng thái lại nếu có lỗi
-            });
-    });
+//                     // Hiển thị nút buttonCreateQr sau khi hoàn tất
+//                     butonEditQr.style.display = "inline-block";
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error("Error during product creation:", error);
+//                 creationComplete = false; // Đặt biến trạng thái lại nếu có lỗi
+//             });
+//     });
 
-    butonEditQr.addEventListener("click", () => {
-        if (creationComplete) {
-            const qrImage = document.querySelector("[qr-image-edit]");
-            const qrCodeUrl = `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`;
+//     butonEditQr.addEventListener("click", () => {
+//         if (creationComplete) {
+//             const qrImage = document.querySelector("[qr-image-edit]");
+//             const qrCodeUrl = `https://bai-tap-lon-atbm.vercel.app/products/detail/${slug}`;
 
-            if (qrImage) {
-                new QRCode(qrImage, {
-                    text: qrCodeUrl,
-                    width: 128,
-                    height: 128,
+//             if (qrImage) {
+//                 new QRCode(qrImage, {
+//                     text: qrCodeUrl,
+//                     width: 128,
+//                     height: 128,
                     
-                });
+//                 });
 
-                const canvas = qrImage.querySelector("canvas");
-                const linkQrImage = canvas.toDataURL("image/png");
+//                 const canvas = qrImage.querySelector("canvas");
+//                 const linkQrImage = canvas.toDataURL("image/png");
 
-                fetch(`/admin/products/saveQr`, {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ slug, linkQrImage })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.code == 200) {
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 3000);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error during QR code upload:", error);
-                    });
-            } else {
-                console.error("Phần tử với thuộc tính qr-image không tìm thấy.");
-            }
-        } else {
-            console.warn("Chưa hoàn tất tạo sản phẩm.");
-        }
-    });
-}
-// end Edit Code
+//                 fetch(`/admin/products/saveQr`, {
+//                     method: "POST",
+//                     headers: {
+//                         'Content-Type': 'application/json'
+//                     },
+//                     body: JSON.stringify({ slug, linkQrImage })
+//                 })
+//                     .then(res => res.json())
+//                     .then(data => {
+//                         if (data.code == 200) {
+//                             setTimeout(() => {
+//                                 window.location.reload();
+//                             }, 3000);
+//                         }
+//                     })
+//                     .catch(error => {
+//                         console.error("Error during QR code upload:", error);
+//                     });
+//             } else {
+//                 console.error("Phần tử với thuộc tính qr-image không tìm thấy.");
+//             }
+//         } else {
+//             console.warn("Chưa hoàn tất tạo sản phẩm.");
+//         }
+//     });
+// }
+// // end Edit Code
 
 
 

@@ -1,7 +1,8 @@
 const Product = require("../../model/product.model");
 const paginationHelper = require("../../helper/pagination.helper");
-const streamUpload = require("../../helper/streamUpload.helper")
+const changeQrLink = require("../../helper/changeQrlink.helper");
 const systemConfig = require("../../config/system");
+const QRCode = require('qrcode');
 //GET /admin/products
 module.exports.index = async (req,res) => {
     if(res.locals.role.permissions.includes("products_view")){
@@ -178,11 +179,16 @@ module.exports.createPost = async (req , res) => {
     const newProduct = new Product(req.body);
     await newProduct.save();
 
+    const productUrl = `https://${req.headers.host}/products/${newProduct.id}`;
+    console.log(productUrl);
+    
+    const qrLink  = await QRCode.toDataURL(productUrl);
+    const newQrLink = await changeQrLink.saveQr(qrLink);
+    await Product.findByIdAndUpdate(newProduct.id, { qrLink: newQrLink });
+
     req.flash("success" , "Thêm sản phẩm thành công!")
-    res.json({
-        "code":"200" ,
-        "slug": newProduct.slug ,
-    })}else{
+    res.redirect("back");
+    }else{
         return ;
     }
 }
@@ -273,45 +279,6 @@ module.exports.detail = async (req , res) => {
     }}else{
         return;
     }
-}
-
-// post /admin/saveQr
-module.exports.saveQr = async (req , res) => {
-    if(res.locals.role.permissions.includes("products_create")){
-    try{
-        const slug = req.body.slug ;
-        console.log(slug);
-        
-        let qrUrl = req.body.linkQrImage;
-        
-        if (qrUrl.startsWith('data:image/png;base64,')) {
-            const base64Data = qrUrl.replace(/^data:image\/png;base64,/, "");
-            const buffer = Buffer.from(base64Data, 'base64');
-            let uploadResult;
-            try {
-                uploadResult = await streamUpload.streamUpload(buffer);
-                qrUrl = uploadResult.url;
-                console.log(qrUrl);
-                
-                await Product.updateOne(
-                    { slug: slug },
-                    { qrLink: qrUrl }
-                );
-            } catch (error) {
-                console.error('Lỗi khi tải lên QR:', error);
-                res.status(500).json({ code: 500, message: 'Lỗi khi tải lên QR' });
-                return;
-            } 
-        }
-        res.json({
-            code : 200
-        })
-    }catch(e){
-        res.redirect(`/${systemConfig.prefixAdmin}/products`);
-    }
-}else{
-    return;
-}
 }
 
 
