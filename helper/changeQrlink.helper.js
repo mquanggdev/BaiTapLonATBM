@@ -13,6 +13,5 @@ module.exports.saveQr = async (qrLink) => {
         }
     }catch(e){
        console.log(e);
-       
     }
 }

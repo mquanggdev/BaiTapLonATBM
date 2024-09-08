@@ -91,7 +91,7 @@ module.exports.editPatch = async (req ,res) => {
   
 }
 
-// [GET] /admin/roles/permissions
+// [Patch] /admin/roles/permissions
 module.exports.permissions = async (req, res) => {
   if(res.locals.role.permissions.includes("roles_permissions")){
   const records = await Role.find({

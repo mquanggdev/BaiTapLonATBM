@@ -164,33 +164,39 @@ module.exports.create = async (req , res) => {
 }
 // [post]/admin/product/createPost
 module.exports.createPost = async (req , res) => {
-    if(res.locals.role.permissions.includes("products_edit")){
-    req.body.price = parseInt(req.body.price);
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.stock = parseInt(req.body.stock);
-    if (req.body.position){
-        req.body.position = parseInt(req.body.position);
+    try {
+        if(res.locals.role.permissions.includes("products_edit")){
+            req.body.price = parseInt(req.body.price);
+            req.body.discountPercentage = parseInt(req.body.discountPercentage);
+            req.body.stock = parseInt(req.body.stock);
+            if (req.body.position){
+                req.body.position = parseInt(req.body.position);
+            }
+            else{
+                const coutProducts = await Product.countDocuments({});
+                req.body.position = coutProducts + 1;
+            }
+        
+            const newProduct = new Product(req.body);
+            await newProduct.save();
+        
+            const productUrl = `https://${req.headers.host}/products/detail/${newProduct.id}`;
+            console.log(productUrl);
+            
+            const qrLink  = await QRCode.toDataURL(productUrl);
+            const newQrLink = await changeQrLink.saveQr(qrLink);
+            await Product.findByIdAndUpdate(newProduct.id, { qrLink: newQrLink });
+        
+            req.flash("success" , "Thêm sản phẩm thành công!")
+            res.redirect("back");
+            }else{
+                return ;
+            }
+    } catch (error) {
+        console.log(error);
+        
     }
-    else{
-        const coutProducts = await Product.countDocuments({});
-        req.body.position = coutProducts + 1;
-    }
-
-    const newProduct = new Product(req.body);
-    await newProduct.save();
-
-    const productUrl = `https://${req.headers.host}/products/${newProduct.id}`;
-    console.log(productUrl);
     
-    const qrLink  = await QRCode.toDataURL(productUrl);
-    const newQrLink = await changeQrLink.saveQr(qrLink);
-    await Product.findByIdAndUpdate(newProduct.id, { qrLink: newQrLink });
-
-    req.flash("success" , "Thêm sản phẩm thành công!")
-    res.redirect("back");
-    }else{
-        return ;
-    }
 }
 
 // [get]/admin/product/edit/:id
